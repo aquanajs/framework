@@ -272,7 +272,11 @@ export type CSSAttribute =
   | "margin-left"
   | "margin-right"
   | "margin-top"
+  | "min-height"
+  | "min-width"
   | "overflow"
+  | "overflow-x"
+  | "overflow-y"
   | "padding"
   | "padding-bottom"
   | "padding-left"
@@ -307,37 +311,37 @@ export const validRegex: {
    */
   {
     name: ["padding"],
-    regex: /p-(.+)/,
+    regex: /^p-(.+)/,
     output: (x) => x,
   },
   {
     name: ["padding-left"],
-    regex: /pl-(.+)/,
+    regex: /^pl-(.+)/,
     output: (x) => x,
   },
   {
     name: ["padding-right"],
-    regex: /pr-(.+)/,
+    regex: /^pr-(.+)/,
     output: (x) => x,
   },
   {
     name: ["padding-left", "padding-right"],
-    regex: /px-(.+)/,
+    regex: /^px-(.+)/,
     output: (x) => x,
   },
   {
     name: ["padding-top"],
-    regex: /pt-(.+)/,
+    regex: /^pt-(.+)/,
     output: (x) => x,
   },
   {
     name: ["padding-bottom"],
-    regex: /pb-(.+)/,
+    regex: /^pb-(.+)/,
     output: (x) => x,
   },
   {
     name: ["padding-top", "padding-bottom"],
-    regex: /py-(.+)/,
+    regex: /^py-(.+)/,
     output: (x) => x,
   },
   /**
@@ -345,37 +349,37 @@ export const validRegex: {
    */
   {
     name: ["margin"],
-    regex: /m-(.+)/,
+    regex: /^m-(.+)/,
     output: (x) => x,
   },
   {
     name: ["margin-left"],
-    regex: /ml-(.+)/,
+    regex: /^ml-(.+)/,
     output: (x) => x,
   },
   {
     name: ["margin-right"],
-    regex: /mr-(.+)/,
+    regex: /^mr-(.+)/,
     output: (x) => x,
   },
   {
     name: ["margin-left", "margin-right"],
-    regex: /mx-(.+)/,
+    regex: /^mx-(.+)/,
     output: (x) => x,
   },
   {
     name: ["margin-top"],
-    regex: /mt-(.+)/,
+    regex: /^mt-(.+)/,
     output: (x) => x,
   },
   {
     name: ["margin-bottom"],
-    regex: /mb-(.+)/,
+    regex: /^mb-(.+)/,
     output: (x) => x,
   },
   {
     name: ["margin-top", "margin-bottom"],
-    regex: /my-(.+)/,
+    regex: /^my-(.+)/,
     output: (x) => x,
   },
   /**
@@ -383,7 +387,7 @@ export const validRegex: {
    */
   {
     name: ["color"],
-    regex: /text-(.+)/,
+    regex: /^text-(.+)/,
     output: (x) => toRGBAWithOpacity(`${x}/100`),
   },
   /**
@@ -391,7 +395,7 @@ export const validRegex: {
    */
   {
     name: ["background-color"],
-    regex: /bg-(.+)/,
+    regex: /^^bg-(.+)/,
     output: (x) => toRGBAWithOpacity(`${x}/100`),
   },
   /**
@@ -399,7 +403,7 @@ export const validRegex: {
    */
   {
     name: ["font-size"],
-    regex: /size-(.+)/,
+    regex: /^^size-(.+)/,
     output: (x) => x,
   },
   /**
@@ -407,7 +411,15 @@ export const validRegex: {
    */
   {
     name: ["font-weight"],
-    regex: /weight-(\d+)/,
+    regex: /^weight-(\d+)/,
+    output: (x) => x,
+  },
+  /**
+   * TEXT ALIGN
+   */
+   {
+    name: ["text-align"],
+    regex: /^align-(\d+)/,
     output: (x) => x,
   },
   /**
@@ -415,22 +427,63 @@ export const validRegex: {
    */
    {
     name: ["text-decoration-line"],
-    regex: /decorate-(\w+)/,
+    regex: /^decorate-(\w+)/,
     output: (x) => determineLine(x),
   },
   {
     name: ["text-decoration-color"],
-    regex: /decorate-color-(.+)/,
+    regex: /^decorate-color-(.+)/,
     output: (x) => toRGBAWithOpacity(`${x}/100`),
   },
   {
     name: ["text-decoration-thickness"],
-    regex: /decorate-width-(\.+)/,
+    regex: /^decorate-width-(.+)/,
     output: (x) => x,
   },
   {
     name: ["text-decoration-style"],
-    regex: /decorate-style-(\.+)/,
+    regex: /^decorate-style-(.+)/,
+    output: (x) => x,
+  },
+  /**
+   * HEIGHT
+   */
+  {
+    name: ["height"],
+    regex: /^h-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["width"],
+    regex: /^w-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["min-height"],
+    regex: /^min-h-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["min-width"],
+    regex: /^min-w-(.+)/,
+    output: (x) => x,
+  },
+  /**
+   * Overflow
+   */
+  {
+    name: ["overflow-x"],
+    regex: /^overflow-x-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["overflow-y"],
+    regex: /^overflow-y-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["overflow"],
+    regex: /^overflow-(.+)/,
     output: (x) => x,
   },
 ];
@@ -444,7 +497,7 @@ function determineLine(s: string) {
 
 function toRGBAWithOpacity(s: string): string {
   const color = s.split("/");
-  console.log(color)
+//  console.log(color)
   const col = toRGBA(color[0]);
   if (!Array.isArray(col)) return col;
   return `rgba(${col.join(", ")}, ${Number(color[1]) / 100})`;

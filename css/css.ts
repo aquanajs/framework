@@ -23,15 +23,22 @@ function generate(classes: string[]): BetterMap<string, CSSClass> {
   for (const className of classes) {
     const css = parseClass(className);
     if (!css) continue;
-    classMap.set(className, css);
+    const newClassName = escapeClassName(className)
+    classMap.set(newClassName, css);
   }
   return classMap;
 }
 
+function escapeClassName(className: string) {
+  return className.replace(/([!"#$%&'()*+,-./:;<=>?@[\\\]^`{|}])/g, '\\$&');
+}
+
 export function parseClass(className: string): CSSClass | null {
   const whichAttribute = validRegex.find((x) => x.regex.test(className));
+  console.log(className)
   if (!whichAttribute) return null;
   const value = whichAttribute.regex.exec(className);
+  console.log(className, value)
   if (!value) return null;
   const css: CSSClass = {};
   for (const item of whichAttribute.name) {
