@@ -1,0 +1,6 @@
+<template>
+    <div class = "p-4rem">
+        <div class = "size-5rem">HELLO</div>
+        <a href = "/about">Click here!</a>
+    </div>
+</template>
