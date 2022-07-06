@@ -18,7 +18,7 @@ interface ClassAndCSS {
 }
 
 function extractAttributes(html: string) {
-  let attributes: Record<CSSAttribute | string, string> = {};
+  const attributes: Record<CSSAttribute | string, string> = {};
   let m;
   do {
     m = html_regex.exec(html);

@@ -285,6 +285,10 @@ export type CSSAttribute =
   | "stroke-dashoffset"
   | "text-align"
   | "text-decoration"
+  | "text-decoration-line"
+  | "text-decoration-color"
+  | "text-decoration-style"
+  | "text-decoration-thickness"
   | "text-indent"
   | "text-transform"
   | "top"
@@ -292,3 +296,176 @@ export type CSSAttribute =
   | "visibility"
   | "width"
   | "z-index";
+
+export const validRegex: {
+  name: CSSAttribute[];
+  regex: RegExp;
+  output: (x: string) => string;
+}[] = [
+  /**
+   * PADDING
+   */
+  {
+    name: ["padding"],
+    regex: /p-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["padding-left"],
+    regex: /pl-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["padding-right"],
+    regex: /pr-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["padding-left", "padding-right"],
+    regex: /px-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["padding-top"],
+    regex: /pt-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["padding-bottom"],
+    regex: /pb-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["padding-top", "padding-bottom"],
+    regex: /py-(.+)/,
+    output: (x) => x,
+  },
+  /**
+   * MARGIN
+   */
+  {
+    name: ["margin"],
+    regex: /m-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["margin-left"],
+    regex: /ml-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["margin-right"],
+    regex: /mr-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["margin-left", "margin-right"],
+    regex: /mx-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["margin-top"],
+    regex: /mt-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["margin-bottom"],
+    regex: /mb-(.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["margin-top", "margin-bottom"],
+    regex: /my-(.+)/,
+    output: (x) => x,
+  },
+  /**
+   * TEXT COLOR
+   */
+  {
+    name: ["color"],
+    regex: /text-(.+)/,
+    output: (x) => toRGBAWithOpacity(`${x}/100`),
+  },
+  /**
+   * BACKGROUND COLOR
+   */
+  {
+    name: ["background-color"],
+    regex: /bg-(.+)/,
+    output: (x) => toRGBAWithOpacity(`${x}/100`),
+  },
+  /**
+   * FONT SIZE
+   */
+  {
+    name: ["font-size"],
+    regex: /size-(.+)/,
+    output: (x) => x,
+  },
+  /**
+   * FONT WEIGHT
+   */
+  {
+    name: ["font-weight"],
+    regex: /weight-(\d+)/,
+    output: (x) => x,
+  },
+  /**
+   * TEXT DECORATION
+   */
+   {
+    name: ["text-decoration-line"],
+    regex: /decorate-(\w+)/,
+    output: (x) => determineLine(x),
+  },
+  {
+    name: ["text-decoration-color"],
+    regex: /decorate-color-(.+)/,
+    output: (x) => toRGBAWithOpacity(`${x}/100`),
+  },
+  {
+    name: ["text-decoration-thickness"],
+    regex: /decorate-width-(\.+)/,
+    output: (x) => x,
+  },
+  {
+    name: ["text-decoration-style"],
+    regex: /decorate-style-(\.+)/,
+    output: (x) => x,
+  },
+];
+
+function determineLine(s: string) {
+  if(s.toLowerCase() === "underline") return "underline"
+  else if(s.toLowerCase() === "overline") return "overline"
+  else if(s.toLowerCase() === "line-through") return "line-through"
+  else return "none"
+}
+
+function toRGBAWithOpacity(s: string): string {
+  const color = s.split("/");
+  console.log(color)
+  const col = toRGBA(color[0]);
+  if (!Array.isArray(col)) return col;
+  return `rgba(${col.join(", ")}, ${Number(color[1]) / 100})`;
+}
+
+function toRGBA(s: string): string | number[] {
+  const color = parseColor(!isNaN(Number(s)) ? Number(s) : s);
+  if (typeof color === "string") return color;
+  return [(color >> 16) & 255, (color >> 8) & 255, color & 255];
+}
+
+function parseColor(color: string | number): string | number {
+  if (!color) return Math.floor(Math.random() * (0xffffff + 1));
+  if (typeof color === "string" && color.startsWith("#")) {
+    color = parseInt(color.replace("#", ""), 16);
+  } else if (Array.isArray(color)) {
+    color = (color[0] << 16) + (color[1] << 8) + color[2];
+  }
+
+  if (color < 0 || color > 0xffffff) throw new RangeError("COLOR_RANGE");
+  else if (Number.isNaN(color)) throw new TypeError("COLOR_CONVERT");
+
+  return color;
+}
